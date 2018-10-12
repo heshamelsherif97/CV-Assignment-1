@@ -11,20 +11,20 @@ public class CvAssignment1 {
 	}
 	
 	public static Mat add2Images(Mat img1, Mat img2) {
-		int x = Math.max(img1.rows(), img2.rows());
-		int y = Math.max(img1.cols(), img2.cols());
-		Mat result = new Mat(x, y, CvType.CV_32F);
-		System.out.println(img1.rows()+"  "+img2.rows());
-		
+		int x = Math.min(img1.rows(), img2.rows());
+		int y = Math.min(img1.cols(), img2.cols());
+		System.out.println(img1.rows() + " Woman"+ img2.rows()+"Batman");
+		System.out.println(img1.cols() + " Woman"+ img2.cols()+"Batman");
+
+		Mat result = new Mat(x, y, CvType.CV_8UC3);		
 		for (int i = 0; i < result.rows(); i++) {
 			for (int j = 0; j < result.cols(); j++) {
-//				double[] rgb1 = img1.get(i, j);
-//				double[] rgb2 = img2.get(i, j);
-//				double[] newRgb = new double[4];
-//				newRgb[0] = rgb1[0] + rgb2[0];
-//				newRgb[1] = rgb1[1] + rgb2[1];
-//				newRgb[2] = rgb1[2] + rgb2[2];
-//				result.put(i, j, newRgb);
+					double[] rgb1 = img1.get(i, j);
+					double[] rgb2 = img2.get(i, j);
+					rgb1[0] += rgb2[0];
+					rgb1[1] += rgb2[1];
+					rgb1[2] += rgb2[2];
+				result.put(i, j, rgb1);
 			}
 		}
 		
