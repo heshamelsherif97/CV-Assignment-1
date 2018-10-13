@@ -12,90 +12,77 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 public class Q2 extends CvAssignment1{
-	
-	
-	public static Mat add2Images1(Mat img1, Mat img2) {	
-		for (int i = 0; i < img1.rows(); i++) {
-			for (int j = 0; j < img1.cols(); j++) {
-				double [] rgb = img1.get(i, j);
-				img2.put(376+i, 1218+j, rgb);
-			}		
-		}
-		return img2;
-	}
-	
-	public static Mat add2Images2(Mat img1, Mat img2) {	
-		for (int i = 0; i < img1.rows(); i++) {
-			for (int j = 0; j < img1.cols(); j++) {
-				double [] rgb = img1.get(i, j);
-				img2.put(i+770, j+835, rgb);
-//			      770,1170
-			}		
-		}
-		return img2;
-	}
-	
-	public static Mat scale1(Mat img, int x, int y) {	
-	    // Creating an empty matrix to store the result
-	      Mat out = new Mat();
-	      // Creating the Size object
-	      Size size = new Size(x, y);
-	      // Scaling the Image
-	      Imgproc.resize(img, out, size, 0, 0, Imgproc.INTER_AREA);
-	      return out;
-	}
-	
-	public static Mat translate(Mat img, double tx, double ty) {
-		Mat out = new Mat();
-		Mat trans = new Mat(2, 3, CvType.CV_32F);
-		double [] data = {1, 0, tx, 0, 1, ty};
-		trans.put(0, 0, data);
-		Size size = new Size(img.width(), img.height());
-		Imgproc.warpAffine(img, out, trans, size);
-		return out;
-	}
 		
-	public static Mat rotate1(Mat img, Mat img2) {
-        int newWidth = 2000;
-        int newHeight = 2000;
-        Mat out = new Mat(newHeight, newWidth, img.type());
-        for (int i = 0; i < img.rows(); i++) {
-			for (int j = 0; j < img.cols(); j++) {
-				double [] rgb = img.get(i, j);
-				out.put(i, j, rgb);
-			}
-		}
-          out = translate(out, (double)newWidth/2-img.width()/2, (double)newHeight/2-img.height()/2);
-	      // Creating a Point object
-	      Point point = new Point((double)(newWidth)/2, (double)newHeight/2);
+	public static Mat q2o1(Mat img1, Mat img2) {
+	      Point p1 = new Point( 0,0 );
+	      Point p2 = new Point( img1.cols() - 1, 0 );
+	      Point p3 = new Point( 0, img1.rows() - 1 );
+	      Point p4 = new Point( 1219, 378 );
+	      Point p5 = new Point( 1310, 378 );
+	      Point p6 = new Point( 1219, 515 );
+	      
+	      MatOfPoint2f ma1 = new MatOfPoint2f(p1,p2,p3);
+	      MatOfPoint2f ma2 = new MatOfPoint2f(p4,p5,p6);
+	      
+	      Mat tranformMatrix = Imgproc.getAffineTransform(ma1,ma2);
 
-	      // Creating the transformation matrix M
-	      Mat rotationMatrix = Imgproc.getRotationMatrix2D(point, 6, 1);
-	      Mat rotationMatrix2 = Imgproc.getRotationMatrix2D(point, -6, 1);
+	      // Creating object of the class Size
+	      Size size = new Size(img2.width(), img2.height());
 	      
-	      Size size = new Size(newWidth, newHeight);
-	      
-	      // Rotating the given image
-	      Imgproc.warpAffine(out, out, rotationMatrix, size);
-	      out = add2Images2(scale1(img2, 337, 435), out);
+	      Mat result= new Mat();
+	      // Applying Wrap Affine
+	      Imgproc.warpAffine(img1, result, tranformMatrix, size);
 	      
 	      
-	      Imgproc.warpAffine(out, out, rotationMatrix2, size);
-          out = translate(out, -(newWidth/2-img.width()/2), -(newHeight/2-img.height()/2));
-          
-          Mat result = new Mat(img.rows(), img.cols(), img.type());
-          for (int i = 0; i < img.rows(); i++) {
-			for (int j = 0; j < img.cols(); j++) {
-				double [] rgb = out.get(i, j);
-				result.put(i, j, rgb);
+	      for (int i = 0; i < result.rows(); i++) {
+			for (int j = 0; j < result.cols(); j++) {
+				double[] rgb = result.get(i, j);
+				double[] rgb2 = img2.get(i, j);
+				if(rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
+					img2.put(i, j, rgb2);
+				}else {
+					img2.put(i, j, rgb);
+				}
 			}
 		}
-          
-	      return result;
+	      return img2;
 	}
 	
+	public static Mat q2o2(Mat img1, Mat img2) {
+	      Point p1 = new Point( 0,0 );
+	      Point p2 = new Point( img1.cols() - 1, 0 );
+	      Point p3 = new Point( 0, img1.rows() - 1 );
+	      Point p4 = new Point( 372, 94 );
+	      Point p5 = new Point( 705, 128 );
+	      Point p6 = new Point( 328, 526 );
+	      
+	      MatOfPoint2f ma1 = new MatOfPoint2f(p1,p2,p3);
+	      MatOfPoint2f ma2 = new MatOfPoint2f(p4,p5,p6);
+	      
+	      Mat tranformMatrix = Imgproc.getAffineTransform(ma1,ma2);
+
+	      // Creating object of the class Size
+	      Size size = new Size(img2.width(), img2.height());
+	      
+	      Mat result= new Mat();
+	      // Applying Wrap Affine
+	      Imgproc.warpAffine(img1, result, tranformMatrix, size);
+	      
+
+	      for (int i = 0; i < result.rows(); i++) {
+			for (int j = 0; j < result.cols(); j++) {
+				double[] rgb = result.get(i, j);
+				double[] rgb2 = img2.get(i, j);
+				if(rgb[0] == 0 && rgb[1] == 0 && rgb[2] == 0) {
+					img2.put(i, j, rgb2);
+				}else {
+					img2.put(i, j, rgb);
+				}
+			}
+		}
+	      return img2;
+	}
 	
-	//370,95
 	
 	public static void main(String[] args) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -103,9 +90,8 @@ public class Q2 extends CvAssignment1{
 		Mat img1 = cv1.loadImage("A1I/Q2I1.jpg", Imgcodecs.CV_LOAD_IMAGE_COLOR);
 		Mat img2 = cv1.loadImage("A1I/Q2I2.jpg", Imgcodecs.CV_LOAD_IMAGE_COLOR);
 		Mat img3 = cv1.loadImage("A1I/Q2I3.jpg", Imgcodecs.CV_LOAD_IMAGE_COLOR);
-		Mat out1 = add2Images1(scale1(img1, 92, 141), img2);
-		
-		cv1.saveImage("output/outQ2O1.jpg", out1);
-		cv1.saveImage("output/outQ2O2.jpg", rotate1(img3, img1));
+
+		cv1.saveImage("output/outQ2-O1.jpg", q2o1(img1, img2));
+		cv1.saveImage("output/outQ2-O2.jpg", q2o2(img1, img3));
 	}
 }
