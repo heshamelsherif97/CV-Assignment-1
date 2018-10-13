@@ -28,7 +28,8 @@ public class Q2 extends CvAssignment1{
 		for (int i = 0; i < img1.rows(); i++) {
 			for (int j = 0; j < img1.cols(); j++) {
 				double [] rgb = img1.get(i, j);
-				img2.put(i+95, j+370, rgb);
+				img2.put(i+770, j+835, rgb);
+//			      770,1170
 			}		
 		}
 		return img2;
@@ -54,9 +55,9 @@ public class Q2 extends CvAssignment1{
 		return out;
 	}
 		
-	public static Mat rotate1(Mat img) {
-        int newWidth = 2160;
-        int newHeight = 3820;
+	public static Mat rotate1(Mat img, Mat img2) {
+        int newWidth = 2000;
+        int newHeight = 2000;
         Mat out = new Mat(newHeight, newWidth, img.type());
         for (int i = 0; i < img.rows(); i++) {
 			for (int j = 0; j < img.cols(); j++) {
@@ -69,15 +70,28 @@ public class Q2 extends CvAssignment1{
 	      Point point = new Point((double)(newWidth)/2, (double)newHeight/2);
 
 	      // Creating the transformation matrix M
-	      Mat rotationMatrix = Imgproc.getRotationMatrix2D(point, 5, 1);
+	      Mat rotationMatrix = Imgproc.getRotationMatrix2D(point, 6, 1);
+	      Mat rotationMatrix2 = Imgproc.getRotationMatrix2D(point, -6, 1);
 	      
-	      
-	      //Size
 	      Size size = new Size(newWidth, newHeight);
 	      
 	      // Rotating the given image
 	      Imgproc.warpAffine(out, out, rotationMatrix, size);
-	      return out;
+	      out = add2Images2(scale1(img2, 337, 435), out);
+	      
+	      
+	      Imgproc.warpAffine(out, out, rotationMatrix2, size);
+          out = translate(out, -(newWidth/2-img.width()/2), -(newHeight/2-img.height()/2));
+          
+          Mat result = new Mat(img.rows(), img.cols(), img.type());
+          for (int i = 0; i < img.rows(); i++) {
+			for (int j = 0; j < img.cols(); j++) {
+				double [] rgb = out.get(i, j);
+				result.put(i, j, rgb);
+			}
+		}
+          
+	      return result;
 	}
 	
 	
@@ -92,6 +106,6 @@ public class Q2 extends CvAssignment1{
 		Mat out1 = add2Images1(scale1(img1, 92, 141), img2);
 		
 		cv1.saveImage("output/outQ2O1.jpg", out1);
-		cv1.saveImage("output/outQ2O2.jpg", rotate1(img3));
+		cv1.saveImage("output/outQ2O2.jpg", rotate1(img3, img1));
 	}
 }
