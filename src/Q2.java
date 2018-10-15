@@ -61,11 +61,10 @@ public class Q2 extends CvAssignment1{
 	      
 	      Mat tranformMatrix = Imgproc.getAffineTransform(ma1,ma2);
 
-	      // Creating object of the class Size
 	      Size size = new Size(img2.width(), img2.height());
 	      
 	      Mat result= new Mat();
-	      // Applying Wrap Affine
+	      
 	      Imgproc.warpAffine(img1, result, tranformMatrix, size);
 	      
 
