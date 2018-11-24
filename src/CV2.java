@@ -4,9 +4,9 @@ import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
-public class CvAssignment1 {
+public class CV2 {
 	
-	public CvAssignment1() {
+	public CV2() {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 	
