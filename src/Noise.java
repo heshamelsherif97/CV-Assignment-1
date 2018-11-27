@@ -1,6 +1,7 @@
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDouble;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -32,7 +33,50 @@ public class Noise {
 		variance /= 9;
 		return variance;
 	}
+	
+	//Sobel Edge Detection
+	public static Mat SobelDetector(Mat img) {
+		Mat result = img.clone();
+		Mat Gy = new Mat();
+		Mat Gx = new Mat();
+		Mat GyAbs = new Mat();
+		Mat GxAbs = new Mat();
 		
+		Imgproc.Sobel(img, Gx, CvType.CV_16S, 1, 0, 3);
+		Imgproc.Sobel(img, Gy, CvType.CV_16S, 0, 1, 3);
+		
+        Core.convertScaleAbs(Gx, GxAbs);
+        Core.convertScaleAbs(Gy, GyAbs);
+		
+        Core.addWeighted(GxAbs, 0.5, GyAbs, 0.5, 0, result);
+		return result;
+	}
+	
+	//UnSharp Filter
+	public static Mat unsharpFilter(Mat img) {
+		Mat result = img.clone();
+		Mat smoothed = new Mat();
+//		Mat edge = SobelDetector(img);
+//		Core.addWeighted(img, 1, edge, -0.7, 0, result);
+		Imgproc.blur(img, smoothed, new Size(5, 5));
+		Core.addWeighted(img, 1.7, smoothed, -0.7, 0, result);
+		return result;
+	}
+	
+	//Calculate Blur
+	public static double calculateBlur(Mat img) {
+		double blur = 0.0;
+		Mat meanMatrix = new Mat();
+		Imgproc.blur(img, meanMatrix, new Size(3, 3));
+		for (int i = 1; i < img.rows() - 1; i++) {
+			for (int j = 1; j < img.cols() - 1; j++) {
+				double variance = calculateVariance(img, meanMatrix.get(i, j)[0], i, j);
+				if(variance <= 50) blur++;
+			}
+		}
+		return (blur/(img.cols()*img.rows()))*100.0;
+	}
+	
 	//Applying median filter 3x3
 	public static Mat medianFilter(Mat img) {
 		Mat result = img.clone();
@@ -104,16 +148,19 @@ public class Noise {
 			result = medianFilter(result);
 			System.out.println("Median Filter is applied");
 		}
-		
-		/*
-		 * 
-		 * Blur Part Here
-		 * 
-		 * */
+			
+		double blurry = calculateBlur(SobelDetector(result));
+		System.out.println("Blurry Pixels: "+blurry+"%");
+		if(blurry > 75.0) {
+			result = unsharpFilter(result);
+			System.out.println("Unsharp Filter is applied");
+			System.out.println("Unsharp Filter is applied After" + calculateBlur(SobelDetector(result)));
+
+
+		}
 		
 		double intensityRange = checkRange(result);
 		System.out.println("Color Range from 0-255: "+intensityRange+"%");
-		
 		if(intensityRange < 50.0) {
 			result = contrastStretch(result);
 			System.out.println("Contrast Stretching is applied");
