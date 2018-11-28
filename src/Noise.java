@@ -54,11 +54,9 @@ public class Noise {
 	
 	//UnSharp Filter
 	public static Mat unsharpFilter(Mat img) {
-		Mat result = img.clone();
+		Mat result = new Mat();
 		Mat smoothed = new Mat();
-//		Mat edge = SobelDetector(img);
-//		Core.addWeighted(img, 1, edge, -0.7, 0, result);
-		Imgproc.blur(img, smoothed, new Size(5, 5));
+		Imgproc.GaussianBlur(img, smoothed, new Size(0,0), 10);
 		Core.addWeighted(img, 1.7, smoothed, -0.7, 0, result);
 		return result;
 	}
@@ -154,9 +152,6 @@ public class Noise {
 		if(blurry > 75.0) {
 			result = unsharpFilter(result);
 			System.out.println("Unsharp Filter is applied");
-			System.out.println("Unsharp Filter is applied After" + calculateBlur(SobelDetector(result)));
-
-
 		}
 		
 		double intensityRange = checkRange(result);
